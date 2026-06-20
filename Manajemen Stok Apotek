@@ -3,12 +3,14 @@ import "fmt"
 
 const NMAX int = 100
 
+//Tipe data obat digunakan untuk menyimpan informasi setiap obat
 type Obat struct {
 	Nama  string
 	Harga int
 	Stok  int
 }
 
+//Tipe data transaksi digunakan untuk menyimpan data transaksi pembelian
 type Transaksi struct {
 	NamaObat string
 	Jumlah   int
@@ -18,38 +20,11 @@ type Transaksi struct {
 type ArrObat [NMAX]Obat
 type ArrTransaksi [NMAX]Transaksi
 
-func lihatObat(A ArrObat, n int) {
-	var i int
-	if n == 0 {
-		fmt.Println()
-		fmt.Println("Belum ada data obat")
-	} else {
-		fmt.Println()
-		fmt.Println("DAFTAR OBAT")
-		fmt.Printf("%-3s%-17s%-10s%-5s\n", "No", "Nama", "Harga", "Stok")
-		for i = 0; i < n; i++ {
-		fmt.Printf("%-3d%-17s%-10d%-5d\n", i+1, A[i].Nama, A[i].Harga, A[i].Stok)
-		}
-	}
-}
+// PROCEDURE / FUNCTION PENCARIAN
 
-func tambahObat(A *ArrObat, n *int) {
-	var x Obat
-	fmt.Print("Nama Obat : ")
-	fmt.Scan(&x.Nama)
-
-	fmt.Print("Harga : ")
-	fmt.Scan(&x.Harga)
-
-	fmt.Print("Stok Awal : ")
-	fmt.Scan(&x.Stok)
-
-	A[*n] = x
-	*n = *n + 1
-	fmt.Println()
-	fmt.Println("Obat berhasil ditambahkan")
-}
-
+/* IS : Array obat A berisi n data obat dan nama yang dicari tersedia.
+   FS : Mengembalikan indeks obat jika ditemukan, -1 jika tidak ditemukan.
+*/
 func sequentialSearch(A ArrObat, n int, nama string) int {
 	var i, idx int
 	idx = -1
@@ -61,45 +36,9 @@ func sequentialSearch(A ArrObat, n int, nama string) int {
 	return idx
 }
 
-func tambahStok(A *ArrObat, n int) {
-	var no, jumlah int
-	fmt.Println()
-	fmt.Println("DAFTAR OBAT")
-	fmt.Printf("%-3s%-17s%-10s%-5s\n", "No", "Nama", "Harga", "Stok")
-	for i := 0; i < n; i++ {
-		fmt.Printf("%-3d%-17s%-10d%-5d\n", i+1, A[i].Nama, A[i].Harga, A[i].Stok)
-	}
-	fmt.Println()
-	fmt.Print("Pilih No Obat : ")
-	fmt.Scan(&no)
-
-	if no < 1 || no > n {
-		fmt.Println("Nomor tidak valid")
-		return
-	}
-	fmt.Print("Jumlah Tambahan : ")
-	fmt.Scan(&jumlah)
-	A[no-1].Stok = A[no-1].Stok + jumlah
-	fmt.Println("Stok berhasil ditambahkan")
-}
-
-func selectionSortNama(A *ArrObat, n int) {
-	var i, j, min int
-	var temp Obat
-	for i = 0; i < n-1; i++ {
-		min = i
-
-		for j = i + 1; j < n; j++ {
-			if A[j].Nama < A[min].Nama {
-				min = j
-			}
-		}
-		temp = A[i]
-		A[i] = A[min]
-		A[min] = temp
-	}
-}
-
+/* IS : Array obat A sudah terurut berdasarkan Nama, n > 0.
+   FS : Mengembalikan indeks obat jika ditemukan, -1 jika tidak ditemukan. 
+*/
 func binarySearch(A ArrObat, n int, nama string) int {
 	var kiri, kanan, tengah, idx int
 	kiri = 0
@@ -121,6 +60,51 @@ func binarySearch(A ArrObat, n int, nama string) int {
 	return idx
 }
 
+//PROCEDURE SORTING
+
+/* IS : Array obat A berisi n data obat.
+   FS : Data obat terurut menaik berdasarkan nama obat.
+*/
+func selectionSortNama(A *ArrObat, n int) {
+	var i, j, min int
+	var temp Obat
+	for i = 0; i < n-1; i++ {
+		min = i
+
+		for j = i + 1; j < n; j++ {
+			if A[j].Nama < A[min].Nama {
+				min = j
+			}
+		}
+		temp = A[i]
+		A[i] = A[min]
+		A[min] = temp
+	}
+}
+
+/* IS : Array obat A berisi n data obat.
+   FS : Data obat terurut menaik berdasarkan stok.
+*/
+func selectionSortStok(A *ArrObat, n int) {
+	var i, j, min int
+	var temp Obat
+	for i = 0; i < n-1; i++ {
+		min = i
+
+		for j = i + 1; j < n; j++ {
+			if A[j].Stok < A[min].Stok {
+				min = j
+			}
+		}
+		temp = A[i]
+		A[i] = A[min]
+		A[min] = temp
+	}
+}
+
+/* IS : Array transaksi T berisi m data transaksi.
+   FS : Data transaksi terurut menurun berdasarkan total transaksi.
+*/
 func insertionSortTransaksi(T *ArrTransaksi, m int) {
 	var i, j int
 	var temp Transaksi
@@ -137,106 +121,207 @@ func insertionSortTransaksi(T *ArrTransaksi, m int) {
 	}
 }
 
-func hapusObat(A *ArrObat, n *int) {
-	var no, i int
-	fmt.Println()
-	fmt.Println("DAFTAR OBAT")
-	fmt.Printf("%-3s%-17s%-10s%-5s\n", "No", "Nama", "Harga", "Stok")
-	for i = 0; i < *n; i++ {
-		fmt.Printf("%-3d%-17s%-10d%-5d\n", i+1, A[i].Nama, A[i].Harga, A[i].Stok)
+//PROCEDURE FITUR DATA OBAT
+
+/* IS : Array obat A dan jumlah data n tersedia.
+   FS : Menampilkan seluruh data obat yang tersimpan.
+*/
+func lihatObat(A ArrObat, n int) {
+	var i int
+	if n == 0 {
+		fmt.Println("Belum ada data obat")
+	} else {
+		fmt.Println()
+		fmt.Println("DAFTAR OBAT")
+		fmt.Printf("%-3s%-17s%-10s%-5s\n", "No", "Nama", "Harga", "Stok")
+		for i = 0; i < n; i++ {
+			fmt.Printf("%-3d%-17s%-10d%-5d\n", i+1, A[i].Nama, A[i].Harga, A[i].Stok)
+		}
 	}
-	fmt.Println()
-	fmt.Print("Pilih No Obat yang akan dihapus : ")
-	fmt.Scan(&no)
-	if no < 1 || no > *n {
-		fmt.Println("Nomor tidak valid")
-		return
-	}
-	for i = no - 1; i < *n-1; i++ {
-		A[i] = A[i+1]
-	}
-	*n = *n - 1
-	fmt.Println("Obat berhasil dihapus")
 }
 
+/* IS : Array obat A dan jumlah data n tersedia, kapasitas belum penuh.
+   FS : Data obat baru ditambahkan ke array jika valid.
+*/
+func tambahObat(A *ArrObat, n *int) {
+	var x Obat
+	fmt.Print("Nama Obat : ")
+	fmt.Scan(&x.Nama)
+
+	fmt.Print("Harga : ")
+	fmt.Scan(&x.Harga)
+
+	fmt.Print("Stok Awal : ")
+	fmt.Scan(&x.Stok)
+	
+	if x.Harga<= 0 {
+		fmt.Println("Harga harus lebih dari 0")
+	} else if x.Stok < 0 {
+		fmt.Println("Stok tidak boleh negatif")
+	} else if *n >= NMAX {
+		fmt.Println("Data Penuh")
+	} else if sequentialSearch(*A, *n, x.Nama) != -1 {
+		fmt.Println("Obat sudah ada")
+	} else {
+		A[*n] = x
+		*n = *n + 1
+		fmt.Println("Obat berhasil ditambahkan")
+	}
+}
+
+
+/* IS : Nama obat dan jumlah stok tambahan diinput pengguna.
+   FS : Stok obat bertambah jika obat ditemukan dan jumlah valid.
+*/
+func tambahStok(A *ArrObat, n int) {
+	var nama string
+	var idx, jumlah int
+	fmt.Print("Nama Obat : ")
+	fmt.Scan(&nama)
+	idx = sequentialSearch(*A, n, nama)
+	if idx == -1 {
+		fmt.Println("Obat tidak ditemukan")
+	} else {
+		fmt.Print("Jumlah Tambahan : ")
+		fmt.Scan(&jumlah)
+		if jumlah <= 0 {
+			fmt.Println("Jumlah harus lebih dari 0")
+		} else {
+			A[idx].Stok = A[idx].Stok + jumlah
+			fmt.Println("Stok berhasil ditambahkan")
+		}
+	}
+}
+
+/* IS : Nama obat yang akan dihapus diinput pengguna.
+   FS : Data obat dihapus dari array jika ditemukan.
+*/
+func hapusObat(A *ArrObat, n *int, T ArrTransaksi, m int) {
+	var nama string
+	var idx, i int
+	var adaTransaksi bool
+
+	selectionSortNama(A, *n)
+
+	fmt.Print("Nama Obat : ")
+	fmt.Scan(&nama)
+
+	idx = binarySearch(*A, *n, nama)
+
+	if idx == -1 {
+		fmt.Println("Obat tidak ditemukan")
+	} else {
+
+		// cek apakah obat pernah ditransaksikan
+		adaTransaksi = false
+		for i = 0; i < m; i++ {
+			if T[i].NamaObat == nama {
+				adaTransaksi = true
+			}
+		}
+
+		if adaTransaksi {
+			fmt.Println("Obat tidak dapat dihapus karena sudah pernah ditransaksikan")
+		} else {
+
+			for i = idx; i < *n-1; i++ {
+				A[i] = A[i+1]
+			}
+
+			*n = *n - 1
+			fmt.Println("Obat berhasil dihapus")
+		}
+	}
+}
+
+
+/* IS : Nama obat yang dicari diinput pengguna.
+   FS : Informasi obat ditampilkan jika ditemukan.
+*/
+func cariObat(A ArrObat, n int) {
+	var nama string
+	var idx int
+
+	fmt.Print("Nama Obat : ")
+	fmt.Scan(&nama)
+
+	idx = sequentialSearch(A, n, nama)
+
+	if idx == -1 {
+		fmt.Println("Obat tidak ditemukan")
+	} else {
+		fmt.Println("Nama :", A[idx].Nama)
+		fmt.Println("Harga :", A[idx].Harga)
+		fmt.Println("Stok :", A[idx].Stok)
+	}
+}
+
+//PROCEDURE TRANSAKSI
+
+/* IS : Nama obat dan jumlah pembelian diinput pengguna.
+   FS : Stok berkurang dan transaksi disimpan jika pembelian valid.
+*/
+func beliObat(A *ArrObat, n int, T *ArrTransaksi, m *int) {
+	var nama string
+	var idx, jumlah, total int
+	var trx Transaksi
+
+	fmt.Print("Nama Obat : ")
+	fmt.Scan(&nama)
+
+	idx = sequentialSearch(*A, n, nama)
+
+	if idx == -1 {
+		fmt.Println("Obat tidak ditemukan")
+	} else {
+		fmt.Print("Jumlah Beli : ")
+		fmt.Scan(&jumlah)
+		if jumlah <= 0 {
+			fmt.Println("Jumlah beli harus lebih dari 0")
+		} else if jumlah <= A[idx].Stok {
+			total = jumlah * A[idx].Harga
+			
+			A[idx].Stok = A[idx].Stok - jumlah
+			
+			trx.NamaObat = A[idx].Nama
+			trx.Jumlah = jumlah
+			trx.Total = total
+			
+			T[*m] = trx
+			*m = *m + 1
+			
+			fmt.Println("===== STRUK PEMBELIAN =====")
+			fmt.Println("Obat :", trx.NamaObat)
+			fmt.Println("Jumlah :", trx.Jumlah)
+			fmt.Println("Total :", trx.Total)
+		} else {
+			fmt.Println("Stok tidak mencukupi")
+		}
+	}
+}
+
+/* IS : Data transaksi tersedia.
+   FS : Menampilkan laporan transaksi yang telah diurutkan berdasarkan total.
+*/
 func laporanTransaksi(T *ArrTransaksi, m int) {
 	var i int
-	insertionSortTransaksi(T, m)
-	fmt.Println()
-	fmt.Println("\n===================================")
-	fmt.Println("      LAPORAN TRANSAKSI")
-	fmt.Println("===================================")
-	fmt.Printf("%-19s%-12s%-9s\n", "Nama Obat", "Jumlah", "Total")
-	for i = 0; i < m; i++ {
-		fmt.Printf("%-19s%-12d%-9d\n", T[i].NamaObat, T[i].Jumlah, T[i].Total)
-	}
-}
 
-func cariObat(A ArrObat, n int) {
-	var no, i int
-	fmt.Println()
-	fmt.Println("DAFTAR OBAT")
-	fmt.Printf("%-3s%-17s%-10s%-5s\n", "No", "Nama", "Harga", "Stok")
-	for i = 0; i < n; i++ {
-		fmt.Printf("%-3d%-17s%-10d%-5d\n", i+1, A[i].Nama, A[i].Harga, A[i].Stok)
-	}
-	fmt.Println()
-	fmt.Print("Pilih No Obat : ")
-	fmt.Scan(&no)
-
-	if no < 1 || no > n {
-		fmt.Println("Nomor tidak valid")
-		return
-	}
-	i = no - 1
-
-	fmt.Println()
-	fmt.Println("DETAIL OBAT")
-	fmt.Println("Nama  :", A[i].Nama)
-	fmt.Println("Harga :", A[i].Harga)
-	fmt.Println("Stok  :", A[i].Stok)
-}
-
-func beliObat(A *ArrObat, n int, T *ArrTransaksi, m *int) {
-	var no, jumlah, total, i, idx int
-	var trx Transaksi
-	fmt.Println()
-	fmt.Println("DAFTAR OBAT")
-	fmt.Printf("%-3s%-17s%-10s%-5s\n", "No", "Nama", "Harga", "Stok")
-
-	for i = 0; i < n; i++ {
-		fmt.Printf("%-3d%-17s%-10d%-5d\n", i+1, A[i].Nama, A[i].Harga, A[i].Stok)
-	}
-	fmt.Println()
-	fmt.Print("Pilih No Obat : ")
-	fmt.Scan(&no)
-
-	if no < 1 || no > n {
-		fmt.Println("Nomor tidak valid")
-		return
-	}
-
-	idx = no - 1
-	fmt.Print("Jumlah Beli : ")
-	fmt.Scan(&jumlah)
-
-	if jumlah <= A[idx].Stok {
-		total = jumlah * A[idx].Harga
-		A[idx].Stok = A[idx].Stok - jumlah
-		trx.NamaObat = A[idx].Nama
-		trx.Jumlah = jumlah
-		trx.Total = total
-		T[*m] = trx
-		*m = *m + 1
-		fmt.Println("===== STRUK =====")
-		fmt.Println("Obat :", trx.NamaObat)
-		fmt.Println("Jumlah :", trx.Jumlah)
-		fmt.Println("Total :", trx.Total)
+	if m == 0 {
+		fmt.Println("Belum ada transaksi")
 	} else {
-		fmt.Println("Stok tidak mencukupi")
+		insertionSortTransaksi(T, m)
+		fmt.Println("Nama\tJumlah\tTotal")
+		for i = 0; i < m; i++ {
+			fmt.Println(T[i].NamaObat, "\t", T[i].Jumlah, "\t", T[i].Total)
+		}
 	}
 }
 
+//LOGIN
+
+/* IS : Username dan password admin diinput pengguna.
+   FS : Mengembalikan true jika login berhasil, false jika gagal.
+*/
 func loginAdmin() bool {
 	var username, password string
 	fmt.Print("Username : ")
@@ -248,47 +333,56 @@ func loginAdmin() bool {
 	return username == "admin" && password == "123"
 }
 
+/* IS : User memilih login sebagai pengguna.
+   FS : Mengembalikan true agar pengguna dapat mengakses menu user.
+*/
 func loginUser() bool {
-	var username, password string
-	fmt.Print("Username : ")
-	fmt.Scan(&username)
-
-	fmt.Print("Password : ")
-	fmt.Scan(&password)
-
-	return username == "user" && password == "123"
+	return true
 }
 
+//MENU 
+
+/* IS : Admin berhasil login.
+   FS : Menampilkan menu admin dan menjalankan fitur yang dipilih.
+*/
 func menuAdmin(A *ArrObat, n *int, T *ArrTransaksi, m *int) {
 	var pilih int
 	pilih = 0
-	for pilih != 6 {
+	for pilih != 7 {
 		fmt.Println()
 		fmt.Println("===== MENU ADMIN =====")
 		fmt.Println("1. Lihat Data Obat")
 		fmt.Println("2. Tambah Obat")
 		fmt.Println("3. Tambah Stok")
 		fmt.Println("4. Hapus Obat")
-		fmt.Println("5. Laporan Transaksi")
-		fmt.Println("6. Logout")
-		fmt.Println()
+		fmt.Println("5. Tampilkan Obat Berdasarkan Stok")
+		fmt.Println("6. Laporan Transaksi")
+		fmt.Println("7. Logout")
 		fmt.Print("Pilih : ")
 		fmt.Scan(&pilih)
-		
+
 		if pilih == 1 {
+			selectionSortNama(A, *n)
 			lihatObat(*A, *n)
 		} else if pilih == 2 {
 			tambahObat(A, n)
 		} else if pilih == 3 {
 			tambahStok(A, *n)
 		} else if pilih == 4 {
-			hapusObat(A, n)
+			hapusObat(A, n, *T, *m)
 		} else if pilih == 5 {
+			selectionSortStok(A, *n)
+			fmt.Println("Data berhasil diurutkan berdasarkan stok")
+			lihatObat(*A, *n)
+		} else if pilih == 6 {
 			laporanTransaksi(T, *m)
 		}
 	}
 }
 
+/* IS : User berhasil login.
+   FS : Menampilkan menu user dan menjalankan fitur yang dipilih.
+*/
 func menuUser(A *ArrObat, n int, T *ArrTransaksi, m *int) {
 	var pilih int
 	pilih = 0
@@ -299,11 +393,11 @@ func menuUser(A *ArrObat, n int, T *ArrTransaksi, m *int) {
 		fmt.Println("2. Cari Obat")
 		fmt.Println("3. Beli Obat")
 		fmt.Println("4. Logout")
-		fmt.Println()
 		fmt.Print("Pilih : ")
 		fmt.Scan(&pilih)
 
 		if pilih == 1 {
+			selectionSortNama(A, n)
 			lihatObat(*A, n)
 		} else if pilih == 2 {
 			cariObat(*A, n)
@@ -313,6 +407,9 @@ func menuUser(A *ArrObat, n int, T *ArrTransaksi, m *int) {
 	}
 }
 
+/* IS : Program dijalankan.
+   FS : Menampilkan menu utama hingga pengguna memilih keluar.
+*/
 func menuUtama(A *ArrObat, n *int, T *ArrTransaksi, m *int) {
 	var pilih int
 	var berhasil bool
@@ -326,8 +423,7 @@ func menuUtama(A *ArrObat, n *int, T *ArrTransaksi, m *int) {
 		fmt.Println("1. Login Admin")
 		fmt.Println("2. Login User")
 		fmt.Println("3. Keluar")
-		fmt.Println()
-		fmt.Print("Pilih menu: ")
+		fmt.Print("Pilih : ")
 		fmt.Scan(&pilih)
 
 		if pilih == 1 {
@@ -362,22 +458,21 @@ func main() {
 	dataObat[0].Nama = "Paracetamol"
 	dataObat[0].Harga = 5000
 	dataObat[0].Stok = 50
-	
+
 	dataObat[1].Nama = "VitaminC"
 	dataObat[1].Harga = 7000
 	dataObat[1].Stok = 40
-	
+
 	dataObat[2].Nama = "Ibuprofen"
 	dataObat[2].Harga = 7000
 	dataObat[2].Stok = 20
-	
+
 	dataObat[3].Nama = "Bodrex"
 	dataObat[3].Harga = 5000
 	dataObat[3].Stok = 30
-	
+
 	dataObat[4].Nama = "Promag"
 	dataObat[4].Harga = 8000
 	dataObat[4].Stok = 25
-
 	menuUtama(&dataObat, &n, &dataTransaksi, &m)
 }
